@@ -13,24 +13,18 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            // Relasi ke tabel users (Menandakan pesanan ini punya siapa)
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            
             $table->string('kode_order')->unique();
             $table->string('jenis_layanan');
+            
+            // FITUR BARU: Data kontak & catatan kurir
+            $table->string('no_hp_pelanggan');
             $table->text('alamat_jemput');
+            $table->string('catatan_kurir')->nullable(); // Boleh kosong
+            
             $table->string('metode_pembayaran');
             $table->integer('harga');
-            
-            // Status pesanan yang alurnya mirip aplikasi ojol
-            $table->enum('status', [
-                'Menunggu Konfirmasi', 
-                'Menunggu Pickup', 
-                'Sedang Dicuci', 
-                'Selesai', 
-                'Dibatalkan Admin'
-            ])->default('Menunggu Konfirmasi');
-            
+            $table->enum('status', ['Menunggu Konfirmasi', 'Menunggu Pickup', 'Sedang Dicuci', 'Selesai', 'Dibatalkan Admin'])->default('Menunggu Konfirmasi');
             $table->timestamps();
         });
     }
