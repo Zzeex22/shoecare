@@ -5,6 +5,8 @@
 @section('content')
 <div class="grid grid-cols-1 gap-6">
     @forelse($orders as $row)
+        @php $isProduct = str_starts_with($row->kode_order, 'PRD'); @endphp
+        
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between gap-6">
             <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
@@ -15,7 +17,7 @@
                 
                 <div class="mt-3 grid grid-cols-2 gap-4 text-sm">
                     <div class="bg-slate-50 p-3 rounded-xl border">
-                        <p class="text-xs text-gray-400 font-bold mb-1">ALAMAT JEMPUT</p>
+                        <p class="text-xs text-gray-400 font-bold mb-1">{{ $isProduct ? 'ALAMAT PENGIRIMAN' : 'ALAMAT JEMPUT' }}</p>
                         <p class="font-semibold text-slate-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i> {{ $row->alamat_jemput }}</p>
                         @if($row->catatan_kurir) <p class="text-xs text-orange-600 mt-2 font-medium bg-orange-50 p-1.5 rounded-md border border-orange-200"><i class="fa-solid fa-clipboard-check mr-1"></i> {{ $row->catatan_kurir }}</p> @endif
                     </div>
@@ -29,9 +31,9 @@
 
             <div class="w-full md:w-64 flex flex-col justify-center border-l border-slate-100 pl-6 space-y-2">
                 @if($row->status == 'Menunggu Konfirmasi')
-                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Menunggu Pickup"><button class="w-full bg-freshGreen text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-green-600"><i class="fa-solid fa-motorcycle mr-1"></i> Tugaskan Kurir</button></form>
+                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Menunggu Pickup"><button class="w-full bg-freshGreen text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-green-600"><i class="fa-solid {{ $isProduct ? 'fa-box-open' : 'fa-motorcycle' }} mr-1"></i> {{ $isProduct ? 'Proses Pengemasan' : 'Tugaskan Kurir' }}</button></form>
                 @elseif($row->status == 'Menunggu Pickup')
-                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Sedang Dicuci"><button class="w-full bg-blue-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-blue-600"><i class="fa-solid fa-hands-bubbles mr-1"></i> Mulai Cuci</button></form>
+                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Sedang Dicuci"><button class="w-full bg-blue-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-blue-600"><i class="fa-solid {{ $isProduct ? 'fa-truck-fast' : 'fa-hands-bubbles' }} mr-1"></i> {{ $isProduct ? 'Kirim Produk ke User' : 'Mulai Cuci' }}</button></form>
                 @elseif($row->status == 'Sedang Dicuci')
                     <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Selesai"><button class="w-full bg-slate-800 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-slate-900"><i class="fa-solid fa-flag-checkered mr-1"></i> Selesaikan Transaksi</button></form>
                 @else

@@ -16,6 +16,16 @@
         </div>
         <div><label class="text-xs font-bold text-gray-500 uppercase">4. Alamat Penjemputan</label><textarea name="alamat_jemput" required rows="3" class="mt-1 w-full border-2 border-gray-200 p-3 rounded-xl bg-gray-50 focus:border-shoeBlue focus:bg-white outline-none" placeholder="Cth: Kost Biru, Jl. Pancing"></textarea></div>
         <div><label class="text-xs font-bold text-gray-500 uppercase">5. Catatan Kurir (Opsional)</label><input type="text" name="catatan" placeholder="Cth: Pager dikunci, ketuk aja" class="mt-1 w-full border-2 border-gray-200 p-3 rounded-xl bg-gray-50 focus:border-shoeBlue focus:bg-white outline-none"></div>
+        
+        @if(Auth::user()->poin > 0)
+        <div class="bg-amber-50 border border-amber-300 p-4 rounded-xl flex items-center gap-3">
+            <input type="checkbox" name="gunakan_poin" id="gunakan_poin" class="w-5 h-5 accent-amber-500 cursor-pointer">
+            <label Lothar for="gunakan_poin" class="text-sm font-bold text-amber-800 cursor-pointer select-none">
+                <i class="fa-solid fa-gift mr-1 text-amber-600"></i> Tukar {{ number_format(Auth::user()->poin, 0, ',', '.') }} Poin untuk potongan harga otomatis! (1 Poin = Rp 1)
+            </label>
+        </div>
+        @endif
+
         <button type="submit" class="w-full bg-mahogany text-white py-4 rounded-xl font-extrabold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition transform mt-4 flex items-center justify-center gap-2">
             <i class="fa-solid fa-paper-plane"></i> Order Sekarang
         </button>

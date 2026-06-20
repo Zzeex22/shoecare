@@ -3,7 +3,6 @@
 <head>
     <title>@yield('title') - ShoeCare</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tambahkan CDN FontAwesome di sini lek -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = { theme: { extend: { colors: { mahogany: '#C04000', shoeBlue: '#1E3A8A', freshGreen: '#10B981', darkSlate: '#1E293B' } } } }
@@ -37,6 +36,9 @@
                     <a href="{{ route('admin.produk') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition {{ request()->routeIs('admin.produk') ? 'bg-freshGreen text-white shadow-md' : 'hover:bg-slate-800 hover:text-white' }}">
                         <i class="fa-solid fa-box-open w-5 text-center"></i> Kelola Produk
                     </a>
+                    <a href="{{ route('admin.laporan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition {{ request()->routeIs('admin.laporan') ? 'bg-freshGreen text-white shadow-md' : 'hover:bg-slate-800 hover:text-white' }}">
+                        <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Laporan Bulanan
+                    </a>
                 @else
                     <a href="{{ route('pesanan.create') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition {{ request()->routeIs('pesanan.create') ? 'bg-blue-50 text-shoeBlue border-l-4 border-shoeBlue' : 'hover:bg-gray-100 hover:text-gray-800' }}">
                         <i class="fa-solid fa-plus w-5 text-center"></i> Buat Pesanan
@@ -47,6 +49,12 @@
                     <a href="{{ route('toko.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition {{ request()->routeIs('toko.index') ? 'bg-blue-50 text-shoeBlue border-l-4 border-shoeBlue' : 'hover:bg-gray-100 hover:text-gray-800' }}">
                         <i class="fa-solid fa-store w-5 text-center"></i> Toko Produk
                     </a>
+                    
+                    <!-- MENU BARU: POIN SAYA -->
+                    <a href="{{ route('poin.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition {{ request()->routeIs('poin.index') ? 'bg-amber-50 text-amber-600 border-l-4 border-amber-500' : 'hover:bg-gray-100 hover:text-gray-800' }}">
+                        <i class="fa-solid fa-star w-5 text-center text-amber-500"></i> Poin ShoeCare
+                    </a>
+
                     <a href="{{ route('pesanan.riwayat') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition {{ request()->routeIs('pesanan.riwayat') ? 'bg-blue-50 text-shoeBlue border-l-4 border-shoeBlue' : 'hover:bg-gray-100 hover:text-gray-800' }}">
                         <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i> Riwayat Order
                     </a>
@@ -67,9 +75,18 @@
     <main class="flex-1 flex flex-col overflow-y-auto">
         <header class="bg-white/90 backdrop-blur-md shadow-sm border-b px-8 py-5 flex items-center justify-between sticky top-0 z-10">
             <h2 class="text-xl font-bold text-gray-800">@yield('page_title')</h2>
-            <span class="bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm font-bold border border-gray-200">
-                <i class="fa-regular fa-user mr-1"></i> Hai, {{ explode(' ', Auth::user()->name)[0] }}
-            </span>
+            
+            <!-- TAMPILAN INFORMASI PENGGUNA & SALDO POIN -->
+            <div class="flex items-center gap-4">
+                @if(Auth::user()->role === 'pelanggan')
+                    <span class="bg-amber-50 text-amber-600 border border-amber-200 px-4 py-2 rounded-full text-sm font-black shadow-sm">
+                        <i class="fa-solid fa-star text-amber-500 animate-spin-slow"></i> {{ number_format(Auth::user()->poin, 0, ',', '.') }} Poin
+                    </span>
+                @endif
+                <span class="bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm font-bold border border-gray-200">
+                    <i class="fa-regular fa-user mr-1"></i> Hai, {{ explode(' ', Auth::user()->name)[0] }}
+                </span>
+            </div>
         </header>
 
         <div class="p-8 max-w-7xl mx-auto w-full">

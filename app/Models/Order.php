@@ -9,16 +9,8 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Kolom apa aja yang boleh diisi langsung (Mass Assignment)
-    protected $fillable = [
-        'user_id',
-        'kode_order',
-        'jenis_layanan',
-        'alamat_jemput',
-        'metode_pembayaran',
-        'harga',
-        'status',
-    ];
+    // Gembok dilepas, semua data dari form otomatis diizinkan masuk
+    protected $guarded = [];
 
     // Relasi: Setiap Order ini milik 1 User (Pelanggan)
     public function user()
