@@ -110,7 +110,7 @@
                     
                 @elseif($row->status == 'Tiba di Tujuan')
                     <div class="bg-blue-50 text-blue-600 py-2.5 rounded-xl text-sm font-bold text-center border border-blue-200">
-                        <i class="fa-solid fa-bell animate-bounce mr-1"></i> Menunggu User Klik Selesai
+                        <i class="fa-solid fa-bell animate-bounce mr-1"></i> Menunggu User Menyelesaikan Pesanan
                     </div>
 
                 @else
