@@ -168,8 +168,8 @@
     <!-- FOOTER -->
     <footer class="bg-white border-t border-gray-200 py-10 text-center">
         <p class="text-gray-500 font-medium text-sm">
-            &copy; 2024 ShoeCare System. Dibuat untuk Project SI Enterprise. <br>
-            <span class="text-xs text-gray-400 mt-1 block">Powered by Laravel & Tailwind CSS</span>
+            &copy; 2026 ShoeCare System. Dibuat untuk Project SI Enterprise. <br>
+            <span class="text-xs text-gray-400 mt-1 block">Powered by Laravel</span>
         </p>
     </footer>
 

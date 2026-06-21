@@ -30,14 +30,93 @@
             </div>
 
             <div class="w-full md:w-64 flex flex-col justify-center border-l border-slate-100 pl-6 space-y-2">
+                
                 @if($row->status == 'Menunggu Konfirmasi')
-                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Menunggu Pickup"><button class="w-full bg-freshGreen text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-green-600"><i class="fa-solid {{ $isProduct ? 'fa-box-open' : 'fa-motorcycle' }} mr-1"></i> {{ $isProduct ? 'Proses Pengemasan' : 'Tugaskan Kurir' }}</button></form>
+                    @if(Auth::user()->role == 'admin')
+                        <form action="{{ route('admin.order.update', $row->id) }}" method="POST">
+                            @csrf <input type="hidden" name="status" value="Menunggu Pickup">
+                            <button class="w-full bg-freshGreen text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-green-600">
+                                <i class="fa-solid fa-check-double mr-1"></i> Terima & Konfirmasi Pesanan
+                            </button>
+                        </form>
+                    @endif
+                    
                 @elseif($row->status == 'Menunggu Pickup')
-                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Sedang Dicuci"><button class="w-full bg-blue-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-blue-600"><i class="fa-solid {{ $isProduct ? 'fa-truck-fast' : 'fa-hands-bubbles' }} mr-1"></i> {{ $isProduct ? 'Kirim Produk ke User' : 'Mulai Cuci' }}</button></form>
+                    @if(is_null($row->kurir_id))
+                        @if(Auth::user()->role == 'kurir')
+                            <form action="{{ route('admin.order.update', $row->id) }}" method="POST">
+                                @csrf <input type="hidden" name="status" value="Ambil_Tugas">
+                                <button class="w-full bg-orange-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-orange-600">
+                                    <i class="fa-solid fa-hand-holding-hand mr-1"></i> Ambil Tugas Antar-Jemput
+                                </button>
+                            </form>
+                        @else
+                            <div class="bg-gray-100 text-gray-500 py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200">
+                                <i class="fa-solid fa-spinner animate-spin mr-1"></i> Menunggu Diambil Kurir
+                            </div>
+                        @endif
+                    @else
+                        @if(Auth::user()->id == $row->kurir_id)
+                            @if(!$isProduct)
+                                <form action="{{ route('admin.order.update', $row->id) }}" method="POST">
+                                    @csrf <input type="hidden" name="status" value="Sedang Dicuci">
+                                    <button class="w-full bg-blue-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-blue-600">
+                                        <i class="fa-solid fa-hotel mr-1"></i> Sepatu Tiba di Toko (Mulai Cuci)
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('admin.order.update', $row->id) }}" method="POST">
+                                    @csrf <input type="hidden" name="status" value="Sedang Diantar">
+                                    <button class="w-full bg-amber-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-amber-600">
+                                        <i class="fa-solid fa-truck-fast mr-1"></i> Kirim Produk ke User
+                                    </button>
+                                </form>
+                            @endif
+                        @else
+                            <div class="bg-gray-100 text-gray-400 py-2.5 rounded-xl text-sm font-medium text-center border">
+                                <i class="fa-solid fa-user-lock mr-1"></i> Diambil Kurir Lain
+                            </div>
+                        @endif
+                    @endif
+                    
                 @elseif($row->status == 'Sedang Dicuci')
-                    <form action="{{ route('admin.order.update', $row->id) }}" method="POST"><@csrf <input type="hidden" name="status" value="Selesai"><button class="w-full bg-slate-800 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-slate-900"><i class="fa-solid fa-flag-checkered mr-1"></i> Selesaikan Transaksi</button></form>
+                    @if(Auth::user()->role == 'admin')
+                        <form action="{{ route('admin.order.update', $row->id) }}" method="POST">
+                            @csrf <input type="hidden" name="status" value="Sedang Diantar">
+                            <button class="w-full bg-amber-500 text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-amber-600">
+                                <i class="fa-solid fa-truck-ramp-box mr-1"></i> Cuci Selesai, Serahkan Kurir
+                            </button>
+                        </form>
+                    @else
+                        <div class="bg-blue-50 text-blue-600 py-2.5 rounded-xl text-sm font-bold text-center border border-blue-200">
+                            <i class="fa-solid fa-soap animate-spin mr-1"></i> Sepatu Sedang Dicuci Admin
+                        </div>
+                    @endif
+                    
+                <!-- LOGIKA BARU UNTUK KURIR PENCET "SUDAH SAMPAI" -->
+                @elseif($row->status == 'Sedang Diantar')
+                    @if(Auth::user()->role == 'kurir' && Auth::user()->id == $row->kurir_id)
+                        <form action="{{ route('admin.order.update', $row->id) }}" method="POST">
+                            @csrf <input type="hidden" name="status" value="Tiba di Tujuan">
+                            <button class="w-full bg-freshGreen text-white py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-green-600">
+                                <i class="fa-solid fa-location-dot mr-1"></i> Saya Sudah Sampai Tujuan!
+                            </button>
+                        </form>
+                    @else
+                        <div class="bg-amber-50 text-amber-600 py-2.5 rounded-xl text-sm font-bold text-center border border-amber-200">
+                            <i class="fa-solid fa-motorcycle animate-pulse mr-1"></i> Sedang Diantar Kurir
+                        </div>
+                    @endif
+                    
+                @elseif($row->status == 'Tiba di Tujuan')
+                    <div class="bg-blue-50 text-blue-600 py-2.5 rounded-xl text-sm font-bold text-center border border-blue-200">
+                        <i class="fa-solid fa-bell animate-bounce mr-1"></i> Menunggu User Klik Selesai
+                    </div>
+
                 @else
-                    <div class="bg-gray-100 text-gray-500 py-2.5 rounded-xl text-sm font-bold text-center border"><i class="fa-solid fa-check-circle text-green-500 mr-1"></i> Selesai</div>
+                    <div class="bg-gray-100 text-gray-500 py-2.5 rounded-xl text-sm font-bold text-center border border-gray-200">
+                        <i class="fa-solid fa-check-circle text-green-500 mr-1"></i> Transaksi Selesai
+                    </div>
                 @endif
 
                 <div class="grid grid-cols-2 gap-2 mt-2">
@@ -47,7 +126,9 @@
             </div>
         </div>
     @empty
-        <div class="bg-white p-10 rounded-2xl shadow-sm text-center border"><p class="text-gray-400 font-bold text-lg"><i class="fa-solid fa-inbox text-3xl mb-2 block"></i> Belum ada orderan masuk hari ini.</p></div>
+        <div class="bg-white p-10 rounded-2xl shadow-sm text-center border border-gray-200">
+            <p class="text-gray-400 font-bold text-lg"><i class="fa-solid fa-inbox text-3xl mb-2 block"></i> Belum ada orderan yang perlu diurus.</p>
+        </div>
     @endforelse
 </div>
 @endsection
